@@ -1200,7 +1200,7 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
 	struct journal_replay *i, **_i;
 	struct genradix_iter iter;
 	bool had_entries = false;
-	u64 last_seq = cur_seq, nr, seq;
+	u64 last_written_seq = cur_seq - 1, last_seq = cur_seq - 1, nr, seq;
 
 	genradix_for_each_reverse(&c->journal_entries, iter, _i) {
 		i = *_i;
@@ -1208,11 +1208,11 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
 		if (journal_replay_ignore(i))
 			continue;
 
-		last_seq = le64_to_cpu(i->j.last_seq);
+		last_written_seq = le64_to_cpu(i->j.last_seq);
 		break;
 	}
 
-	nr = cur_seq - last_seq;
+	nr = cur_seq - last_written_seq;
 
 	if (nr + 1 > j->pin.size) {
 		free_fifo(&j->pin);
@@ -1223,14 +1223,14 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
 		}
 	}
 
-	j->replay_journal_seq	= last_seq;
+	j->replay_journal_seq	= last_written_seq;
 	j->replay_journal_seq_end = cur_seq;
-	j->last_seq_ondisk	= last_seq;
-	j->flushed_seq_ondisk	= cur_seq - 1;
-	j->seq_ondisk		= cur_seq - 1;
-	j->pin.front		= last_seq;
+	j->last_seq_ondisk	= last_written_seq;
+	j->flushed_seq_ondisk	= last_seq;
+	j->seq_ondisk		= last_seq;
+	j->pin.front		= last_written_seq;
 	j->pin.back		= cur_seq;
-	atomic64_set(&j->seq, cur_seq - 1);
+	atomic64_set(&j->seq, last_seq);
 
 	fifo_for_each_entry_ptr(p, &j->pin, seq)
 		journal_pin_list_init(p, 1);
@@ -1260,7 +1260,10 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
 	}
 
 	if (!had_entries)
-		j->last_empty_seq = cur_seq;
+		j->last_empty_seq = last_seq;
+
+	WARN(j->last_empty_seq >= cur_seq, "journal startup error: last empty seq %llu is higher or equal than the next seq number to be used (%llu)",
+	      j->last_empty_seq, cur_seq);
 
 	spin_lock(&j->lock);
 
