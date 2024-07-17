@@ -392,6 +392,11 @@ bch2_trans_update_by_path(struct btree_trans *trans, btree_path_idx_t path_idx,
 	struct btree_insert_entry *i, n;
 	int cmp;
 
+	if (trans->nr_updates > 32) {
+		bch2_dump_trans_paths_updates(trans);
+		panic("too many updates\n");
+	}
+
 	struct btree_path *path = trans->paths + path_idx;
 	EBUG_ON(!path->should_be_locked);
 	EBUG_ON(trans->nr_updates >= trans->nr_paths);

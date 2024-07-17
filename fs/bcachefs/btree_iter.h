@@ -24,7 +24,7 @@ static inline void __btree_path_get(struct btree_trans *trans, struct btree_path
 	unsigned idx = path - trans->paths;
 
 	EBUG_ON(!test_bit(idx, trans->paths_allocated));
-	if (unlikely(path->ref == U8_MAX)) {
+	if (unlikely(path->ref > 8)) {
 		bch2_dump_trans_paths_updates(trans);
 		panic("path %u refcount overflow\n", idx);
 	}

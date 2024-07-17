@@ -3803,7 +3803,7 @@ static inline int test_for_valid_rec(struct dyn_ftrace *rec)
 
 static inline int print_rec(struct seq_file *m, unsigned long ip)
 {
-	seq_printf(m, "%ps", (void *)ip);
+	seq_printf(m, "%pS", (void *)ip);
 	return 0;
 }
 #endif
@@ -6079,7 +6079,7 @@ static int g_show(struct seq_file *m, void *v)
 		return 0;
 	}
 
-	seq_printf(m, "%ps\n", (void *)entry->ip);
+	seq_printf(m, "%pS\n", (void *)entry->ip);
 
 	return 0;
 }

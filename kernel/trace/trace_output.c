@@ -360,22 +360,26 @@ static inline const char *kretprobed(const char *name, unsigned long addr)
 void
 trace_seq_print_sym(struct trace_seq *s, unsigned long address, bool offset)
 {
+	if (!offset) {
+		trace_seq_printf(s, "%pS", address);
+	} else {
 #ifdef CONFIG_KALLSYMS
-	char str[KSYM_SYMBOL_LEN];
-	const char *name;
+		char str[KSYM_SYMBOL_LEN];
+		const char *name;
 
-	if (offset)
-		sprint_symbol(str, address);
-	else
-		kallsyms_lookup(address, NULL, NULL, NULL, str);
-	name = kretprobed(str, address);
+		if (offset)
+			sprint_symbol(str, address);
+		else
+			kallsyms_lookup(address, NULL, NULL, NULL, str);
+		name = kretprobed(str, address);
 
-	if (name && strlen(name)) {
-		trace_seq_puts(s, name);
-		return;
-	}
+		if (name && strlen(name)) {
+			trace_seq_puts(s, name);
+			return;
+		}
 #endif
-	trace_seq_printf(s, "0x%08lx", address);
+		trace_seq_printf(s, "0x%08lx", address);
+	}
 }
 
 #ifndef CONFIG_64BIT

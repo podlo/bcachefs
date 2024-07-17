@@ -193,9 +193,9 @@ FTRACE_ENTRY(kernel_stack, stack_entry,
 		__stack_array(	unsigned long,	caller,	FTRACE_STACK_ENTRIES, size)
 	),
 
-	F_printk("\t=> %ps\n\t=> %ps\n\t=> %ps\n"
-		 "\t=> %ps\n\t=> %ps\n\t=> %ps\n"
-		 "\t=> %ps\n\t=> %ps\n",
+	F_printk("\t=> %pS\n\t=> %pS\n\t=> %pS\n"
+		 "\t=> %pS\n\t=> %pS\n\t=> %pS\n"
+		 "\t=> %pS\n\t=> %pS\n",
 		 (void *)__entry->caller[0], (void *)__entry->caller[1],
 		 (void *)__entry->caller[2], (void *)__entry->caller[3],
 		 (void *)__entry->caller[4], (void *)__entry->caller[5],
@@ -211,9 +211,9 @@ FTRACE_ENTRY(user_stack, userstack_entry,
 		__array(	unsigned long,	caller, FTRACE_STACK_ENTRIES	)
 	),
 
-	F_printk("\t=> %ps\n\t=> %ps\n\t=> %ps\n"
-		 "\t=> %ps\n\t=> %ps\n\t=> %ps\n"
-		 "\t=> %ps\n\t=> %ps\n",
+	F_printk("\t=> %pS\n\t=> %pS\n\t=> %pS\n"
+		 "\t=> %pS\n\t=> %pS\n\t=> %pS\n"
+		 "\t=> %pS\n\t=> %pS\n",
 		 (void *)__entry->caller[0], (void *)__entry->caller[1],
 		 (void *)__entry->caller[2], (void *)__entry->caller[3],
 		 (void *)__entry->caller[4], (void *)__entry->caller[5],
