@@ -849,7 +849,7 @@ transaction_restart:							\
 									\
 	if (bch2_err_matches(_ret, ENOMEM)) {				\
 		_gfp = GFP_KERNEL;					\
-		_ret = drop_locks_do(trans, _do);			\
+		_ret = drop_locks_do(_trans, _do);			\
 	}								\
 	_ret;								\
 })
