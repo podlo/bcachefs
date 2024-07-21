@@ -862,7 +862,7 @@ transaction_restart:							\
 	_ret = 0;							\
 	if (unlikely(!_p)) {						\
 		_gfp = GFP_KERNEL;					\
-		_ret = drop_locks_do(trans, ((_p = _do), 0));		\
+		_ret = drop_locks_do(_trans, ((_p = _do), 0));		\
 	}								\
 	_p;								\
 })
